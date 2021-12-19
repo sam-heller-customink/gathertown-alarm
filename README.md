@@ -1,4 +1,6 @@
-# ![Hex Panel](https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/internal-dashboard/images/rWNFj8kGfifXdFkSjnbYq)  gathertown alarms ![Hex Panel](https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/internal-dashboard/images/w8BXJhxPd6LjeuR7sEoZN) 
+# gathertown alarms ![Hex Panel Green](https://user-images.githubusercontent.com/93146809/146673338-7ccb8044-bbd4-4e10-ae2d-f06b0f0317ab.png) ![Hex Panel Red](https://user-images.githubusercontent.com/93146809/146673336-6196731e-099c-497c-9fc6-6ea4ba74b34a.png) ![Hex Panel Yellow](https://user-images.githubusercontent.com/93146809/146673547-0204dbe5-28b4-432d-9d6d-44c97f5c5f16.png) ![Hex Panel Purple](https://user-images.githubusercontent.com/93146809/146673552-c8032b21-50bc-4e6c-9c12-763ff37195d4.png) ![Hex Panel Orange](https://user-images.githubusercontent.com/93146809/146673555-473bfd1e-b765-4dfc-954f-8b749214d02e.png) ![Hex Panel Blue](https://user-images.githubusercontent.com/93146809/146673558-daf36702-abd8-46f3-afc4-e660ec6c5efc.png) 
+
+
 
 
 Experiment with the [gathertown](https://user-images.githubusercontent.com/93146809/146673338-7ccb8044-bbd4-4e10-ae2d-f06b0f0317ab.png) [websockets API](https://user-images.githubusercontent.com/93146809/146673336-6196731e-099c-497c-9fc6-6ea4ba74b34a.png), which is under heavy development at the moment so this is probably already deprecated. 
