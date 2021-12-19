@@ -23,7 +23,7 @@ export const MAP_ID = "room-id-from-map-editor"
 Once that's set, make sure to add some of the lights named "Neon Lights (Hexagonal)(3)" in the object picker, save your map, and run it with
 
 ```bash
-npm run start
+npm run start alerts
 ```
 
 This defaults to flashing yellow and red during an alert, and resetting to green when alls well. If you want to change the colors, check what's available in `HexPanelColor.palette` and swap out the values for `alarm_one`, `alarm_two` and `safe` in `lib/HexPanel.ts`
@@ -47,9 +47,14 @@ game.subscribeToConnection((connected) => {
 })
 ```
 
-You can get the id from the maps json, which you can pull up in your browser at `https://gather.town/api/getMap?apiKey=YOUR-KEY-HERE&mapId=room-id-from-map-editor&spaceId=OoOoOaAaAaAhHhH\My-Gather-Space`. Note that the `\\` from the config.ts is a single `\` in the URL.
+You can get the id from the maps json, which you can pull up in your browser at `https://gather.town/api/getMap?apiKey=YOUR-KEY-HERE&mapId=room-id-from-map-editor&spaceId=OoOoOaAaAaAhHhH\My-Gather-Space`. Note that the `\\` from the config.ts is a single `\` in the URL. You can also run the `npm run items` and the script will go ahead and save your map as map.json in the current directory and print out a bit of information about the objects you've currently got configured: 
+```
+Neon Light (Circle) #d5a7fa
+NeonLightCircle - fQUHe3C1UWtUbqRu_SpNX
+https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/internal-dashboard/images/0DLRQPWAwNGhEXNrHhEU4
 
-**Pro-Tip**: Grab a copy of your map json to restore your space from so you don't end up blowing away your existing space, recreating it from memory, and explaining to your co-workers why all their desk decorations disappeared over the weekend. 
 
-
-
+Neon Light (Circle) #5fcde4
+NeonLightCircle - fQUHe3C1UWtUbqRu_SpNX
+https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/internal-dashboard/images/0-8Rb8J_0GNvdAmWQautc
+```

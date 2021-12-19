@@ -4,7 +4,10 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "start": "tsc -b && node dist/index.js"
+    "alarms": "tsc -b && node dist/index.js alarms",
+    "items": "tsc -b && node dist/index.js items",
+    "help" : "tsc -b && node dist/index.js help"
+
   },
   "author": "",
   "license": "ISC",
