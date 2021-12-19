@@ -1,7 +1,7 @@
 # ![Hex Panel](https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/internal-dashboard/images/rWNFj8kGfifXdFkSjnbYq)  gathertown alarms ![Hex Panel](https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/internal-dashboard/images/w8BXJhxPd6LjeuR7sEoZN) 
 
 
-Experiment with the [gathertown](https://gathertown.notion.site/Gather-Websocket-API-bf2d5d4526db412590c3579c36141063) [websockets API](https://gathertown.notion.site/Gather-Websocket-API-bf2d5d4526db412590c3579c36141063), which is under heavy development at the moment so this is probably already deprecated. 
+Experiment with the [gathertown](https://user-images.githubusercontent.com/93146809/146673338-7ccb8044-bbd4-4e10-ae2d-f06b0f0317ab.png) [websockets API](https://user-images.githubusercontent.com/93146809/146673336-6196731e-099c-497c-9fc6-6ea4ba74b34a.png), which is under heavy development at the moment so this is probably already deprecated. 
 
  
 Currently this is wired up to strobe all of the 3 Panel Hexagon lights in a given space when an alarm condition is met.  This is the template ID of the object (currently `NeonLightHexagonal3 - AAon1ubyMS1h4gUg9fcuv`) which is set in `lib/HexPanel.ts` and the location of the image asset, which is managed by the Color class in `lib/HexPanelColor.ts`. 
