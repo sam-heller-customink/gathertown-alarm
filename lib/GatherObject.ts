@@ -1,22 +1,22 @@
 import { Game, MapObject, WireObject } from "@gathertown/gather-game-client";
-import { HexPanelColor } from './HexPanelColor'
+import { GatherAsset } from './GatherAsset'
 import { Alarm } from './Alarm'
- 
+
 /**
- * Single Hex Panel, shouldn't be used directly unless you only have one or two
- * lights, otherwise you'll run into rate limiting issues reaaaaal quicklike
+ * Base Gather Object, children just need to define asset
  */
-export class HexPanel {
-    static template_id: string = "NeonLightHexagonal3 - AAon1ubyMS1h4gUg9fcuv"
+export class GatherObject {
     id: string
     map_id: string
     object: MapObject
     game: Game
+    asset: GatherAsset = new GatherAsset()
+    alarm?: Alarm|null
 
     /**
-     * Load a Hex panel. If an alarm object is passed this will set it
-     * up to alert whenever the alarm goes active. Otherwise this should
-     * be used to populate an objects array for bulk updates
+     * Load a Gather Object panel. If an alarm object is passed this will set it
+     * up to alert whenever the alarm goes active. Otherwise this should be
+     * used to populate an objects array for bulk updates
      * 
      * @param map_id 
      * @param game 
@@ -28,7 +28,6 @@ export class HexPanel {
         this.id = object_id
         this.map_id = map_id
         this.game = game
-        console.log("Hex Panel Loading for", object_id)
         this.object = game.getObject(object_id)!.obj
         if (alarm != null){
             setInterval(() => {alarm.active() ? this.flash() : this.clear()}, 200)
@@ -53,21 +52,21 @@ export class HexPanel {
     } 
 
     /**
-     * Flash this individual panel 
+     * Flash this individual object 
      */
     flash() : void
     {
-        this.object.normal = this.object.normal == HexPanelColor.alarm_one ? HexPanelColor.alarm_two : HexPanelColor.alarm_one
+        this.object.normal = this.object.normal == this.asset.one() ? this.asset.two() : this.asset.one()
         this.game.setObject(this.map_id, this.id, this.object)
     }
 
     /**
-     * Clear this panel to the safe color, only run if we're not already safe
+     * Clear this object to the safe color, only run if we're not already safe
      */
     clear() : void
     {
-        if (this.object.normal != HexPanelColor.safe){
-            this.object.normal = HexPanelColor.safe
+        if (this.object.normal != this.asset.base()){
+            this.object.normal = this.asset.base()
             this.game.setObject(this.map_id, this.id, this.object)
         }
     }

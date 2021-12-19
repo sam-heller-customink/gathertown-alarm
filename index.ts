@@ -1,5 +1,5 @@
 import { API_KEY, MAP_ID, SPACE_ID } from "./config";
-import { HexPanelList } from "./lib/HexPanelList";
+import { NeonFloorList } from "./lib/lights/NeonFloorLight";
 import { Alarm } from "./lib/Alarm"
 import { Game } from "@gathertown/gather-game-client";
 global.WebSocket = require("isomorphic-ws");
@@ -14,7 +14,7 @@ game.subscribeToConnection((connected) => {
     const batchConnectInterval = setInterval(() => {
         if (connected){
             const alarm = new Alarm() 
-            new HexPanelList(MAP_ID, game, alarm)
+            new NeonFloorList(MAP_ID, game, alarm).buildList()
             setInterval(() => {alarm.check()}, 10000)
             clearInterval(batchConnectInterval) // Once the Panels and alarm are set up, clear this
         }
