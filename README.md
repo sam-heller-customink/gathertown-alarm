@@ -2,10 +2,9 @@
 
 
 
-
 Experiment with the [gathertown](https://gather.town) [websockets API](https://gathertown.notion.site/Gather-Websocket-API-bf2d5d4526db412590c3579c36141063), which is under heavy development at the moment so this is probably already deprecated. 
 
- 
+
 Currently this is wired up to strobe all of the 3 Panel Hexagon lights in a given space when an alarm condition is met.  This is the template ID of the object (currently `NeonLightHexagonal3 - AAon1ubyMS1h4gUg9fcuv`) which is set in `lib/HexPanel.ts` and the location of the image asset, which is managed by the Color class in `lib/HexPanelColor.ts`. 
 
 There aren't any real world alerts built out yet, currently the Alarm class just switches state every time it's checked, but that logic could easily be swapped out to query whatever seems worth flashing a bunch of lights about. 
