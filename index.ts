@@ -1,19 +1,13 @@
-import { API_KEY, SPACE_ID } from "./config";
-import { Game } from "@gathertown/gather-game-client";
-import { List, Alarm } from "./lib";
+require('dotenv').config({ path: __dirname+'/.env' });
+import { Listener, alwaysFailingAlarm } from "./lib";
+let listener = new Listener()
 
-global.WebSocket = require("isomorphic-ws");
+listener.filter(['templateExistsFilter'])
+listener.mutator('resetMutator')
+listener.alarm(alwaysFailingAlarm)
+listener.connect()
 
 
-const game = new Game(() => Promise.resolve({ apiKey: API_KEY }));
-game.connect(SPACE_ID); 
-game.subscribeToConnection((connected) => {
-    let list = new List(game)
-    game.subscribeToEvent("mapSetObjects", ((raw, context) => list.mapSetObjects(raw, context)))
-    game.subscribeToEvent("mapDeleteObject", ((action, map) => list.mapDeleteObjects(action, map)))
-    let alarm =new Alarm('AlwaysOn', (() => false))
-    list.registerAlarm(alarm, 1000)
-})
 
 
 

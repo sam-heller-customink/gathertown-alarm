@@ -1,105 +1,94 @@
-import { MAP_ID } from "../config";
-import { convertMapObjectToWireObject, Game, MapObject, ServerClientEventContext, WireObject } from "@gathertown/gather-game-client";
-import {Templates, Alarm, Intervals, MapDeleteObjectsRaw, MapSetObjectsRaw, WireList } from ".";
+import { convertMapObjectToWireObject, Game, MapObject } from "@gathertown/gather-game-client";
+import {Templates, Intervals, WireList, ObjectList } from ".";
 
 export class List {
-        game: Game
-        objects: Map<string, MapObject> = new Map()
-        intervals: Intervals = {itemJobInterval: {}, alertCheckInterval: {}}
-        templates: Templates = new Templates()
-        alarms: Array<Alarm> = Array()
-        filters: Array<Function> = Array()
+    public game: Game
+    public objects: Map<string, MapObject> = new Map()
+    public templates: Templates = new Templates()
+    private intervals: Intervals = {}
+    private alarms: Array<Function> = Array()
+    private filters: Array<Function> = Array()
+    private mutators: Array<Function> = Array()
 
-        constructor(game: Game)
-        {
-            this.game = game
-            this.intervals.alertCheckInterval = setInterval(() => this.alertJob(), 100)
-            //Register the first filter to only operate on objects that we have template data for
-            this.registerFilter((object:MapObject) => this.templates.names.includes(object._name!))
-            
+    constructor(game: Game)
+    {
+        this.game = game
+    }
+
+    public connect() : void 
+    {
+        this.intervals.alertCheckInterval = setInterval(() => this.alertJob(), 100)
+    }
+
+    public registerFilter(filter: Function|Array<Function>) : void
+    {
+        if (!Array.isArray(filter)) filter = [filter]
+        this.filters = this.filters.concat(filter)
+
+    } 
+
+    public registerAlarm(alarm: Function) : void 
+    {
+        this.alarms.push(alarm)
+
+    }
+
+    public registerMutator(mutator: Function|Array<Function>) : void
+    {
+        if (!Array.isArray(mutator)) mutator = [mutator]
+        this.mutators = this.mutators.concat(mutator)
+    }
+
+    public saveObjects(objects:ObjectList, deleteExisting:boolean = false) : void
+    {
+        let objectsArray = Array.from(Object.values(objects))
+        if (deleteExisting) this.objects = new Map()
+        for (let filter of this.filters){
+            objectsArray = objectsArray.filter((o) => {
+                return filter(this, o)
+            }, this)
         }
+        objectsArray.forEach((object) => this.objects.set(object.id!, object))
+    }
 
-        public registerFilter(filter: Function) : void
-        {
-            this.filters.push(filter)
+    private mutateObjects(object: MapObject) : MapObject
+    {
+        for (let mutator of this.mutators){object = mutator(this, object)}
+        return object
+    }
 
+    private getWireList() : WireList
+    {
+        let index:number = 0
+        let wires:WireList = {}
+        for (let obj of Array.from(this.objects.values())){
+            obj._tags = []
+            obj = this.mutateObjects(obj)
+            wires[index++] = convertMapObjectToWireObject(obj)
         }
+        return wires
+    }
 
-        public registerAlarm(alarm: Alarm, frequency: number = 1000) : void 
-        {
-            this.alarms.push(alarm)
-
-        }
-        
-        public mapDeleteObjects(raw: MapDeleteObjectsRaw , context: ServerClientEventContext) : void
-        {
-            if(context.map){
-                this.objects = new Map() //Delete everything and start from scratch
-                this.saveObjects(Object.values(context.map.objects!))
+    private sendObjects() : void
+    {
+        let objects = this.getWireList()
+        this.game.engine.sendAction({
+            $case: "mapSetObjects",
+            mapSetObjects: {
+                mapId: String(process.env.MAP_ID),
+                objects
             }
-        }
+        })
+    }
 
-        public mapSetObjects(raw: MapSetObjectsRaw, context: ServerClientEventContext) : void
-        {   
-            if (context.map){
-                console.log('mapSetObjects');
-                this.saveObjects(Object.values(context.map.objects!))
-            }
-        }
-
-        protected saveObjects(objects:Array<MapObject>) : void
-        {
-            let filtered = {...objects}
-            for (let filter of this.filters){filtered = filtered.filter(filter.bind(this))}
-            filtered.forEach((object) => this.objects.set(object.id!, object))
-        }
-
-        protected getWireList(updater:Function = ((o:WireObject) => {})) : WireList
-        {
-            let index:number = 0
-            let wires:WireList = {}
-            for (let obj of Array.from(this.objects.values())){
-                obj = updater(obj)
-                obj._tags = []
-                wires[index] = convertMapObjectToWireObject(obj)
-                index++;
-            }
-            return wires
-        }
-
-        protected sendObjects()
-        {
-            let objects = this.getWireList(this.swapWireObjectColor.bind(this))
-            this.game.engine.sendAction({
-                $case: "mapSetObjects",
-                mapSetObjects: {
-                    mapId: MAP_ID,
-                    objects
-                }
-            })
-        }
-
-        protected swapWireObjectColor(object: WireObject) : WireObject
-        {
-            let parts = object.normal!.split('/')
-            parts[parts.length - 1] = this.templates.randomColor(object._name!)
-            object.normal = parts.join('/')
-            return object
-        }
-
-        protected alertJob(){
-            if (!this.checkAlarms()){
+    private alertJob(){
+        for(let alarm of this.alarms){
+            if (!alarm()){
                 this.sendObjects()
             }
-        }   
-
-        protected checkAlarms() : Boolean
-        {
-            for(let alarm  of this.alarms){
-                if (!alarm.okay()){return false}
-            }
-            return true
         }
+    }   
+
 
 
 }
