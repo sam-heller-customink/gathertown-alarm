@@ -1,18 +1,20 @@
+require('dotenv').config();
 import { convertMapObjectToWireObject, Game, MapObject } from "@gathertown/gather-game-client";
-import {Templates, Intervals, WireList, ObjectList } from ".";
-
+import {Templates, Intervals, WireList, ObjectList, Mutator, Filter } from ".";
 export class List {
     public game: Game
+    public mapId: string
     public objects: Map<string, MapObject> = new Map()
     public templates: Templates = new Templates()
     private intervals: Intervals = {}
     private alarms: Array<Function> = Array()
-    private filters: Array<Function> = Array()
-    private mutators: Array<Function> = Array()
+    private filters: Array<Filter> = Array()
+    private mutators: Array<Mutator> = Array()
 
     constructor(game: Game)
     {
         this.game = game
+        this.mapId = String(process.env.MAP_ID)
     }
 
     public connect() : void 
@@ -20,9 +22,9 @@ export class List {
         this.intervals.alertCheckInterval = setInterval(() => this.alertJob(), 100)
     }
 
-    public registerFilter(filter: Function|Array<Function>) : void
+    public registerFilter(filter: Filter|Array<Filter>) : void
     {
-        if (!Array.isArray(filter)) filter = [filter]
+        if (!Array.isArray(filter)) filter = new Array(filter)
         this.filters = this.filters.concat(filter)
 
     } 
@@ -33,7 +35,7 @@ export class List {
 
     }
 
-    public registerMutator(mutator: Function|Array<Function>) : void
+    public registerMutator(mutator: Mutator|Array<Mutator>) : void
     {
         if (!Array.isArray(mutator)) mutator = [mutator]
         this.mutators = this.mutators.concat(mutator)
@@ -41,19 +43,27 @@ export class List {
 
     public saveObjects(objects:ObjectList, deleteExisting:boolean = false) : void
     {
-        let objectsArray = Array.from(Object.values(objects))
-        if (deleteExisting) this.objects = new Map()
-        for (let filter of this.filters){
-            objectsArray = objectsArray.filter((o) => {
-                return filter(this, o)
-            }, this)
+        if (this.mapId in this.game.partialMaps){
+            let objectsArray = Array.from(Object.values(objects))
+            if (deleteExisting) this.objects = new Map()
+            for (let filter of this.filters){
+                objectsArray = objectsArray.filter((o) => {
+                    return filter.filter(this.game.partialMaps[this.mapId], o)
+                }, this)
+            }
+            objectsArray.forEach((object) => this.objects.set(object.id!, object))
         }
-        objectsArray.forEach((object) => this.objects.set(object.id!, object))
     }
 
     private mutateObjects(object: MapObject) : MapObject
     {
-        for (let mutator of this.mutators){object = mutator(this, object)}
+        
+        
+        if (this.mapId in this.game.partialMaps){
+            let map = this.game.partialMaps[this.mapId]
+            for (let mutator of this.mutators){object = mutator.mutate(map, object)}
+        }
+        
         return object
     }
 

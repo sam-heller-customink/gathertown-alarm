@@ -1,28 +1,48 @@
 require('dotenv').config()
-import { MapObject } from "@gathertown/gather-game-client"
-import { List } from "."
+import { GameMapV2, MapObject } from "@gathertown/gather-game-client"
+import { Templates } from "."
 
-export class FilterLibrary {
-    filters: {[key: string ]: Function }= {
-        alwaysPassFilter: (list: List, object:MapObject): boolean => true,
-        templateExistsFilter: (list: List, object:MapObject): boolean =>{ return list.templates.names.includes(object._name!) },
-        idsFromEnvFilter: (list: List, object:MapObject) : boolean => {
-            if (process.env.GATHER_FILTER_IDS && object.id){
-                let validIds = process.env.GATHER_FILTER_IDS.split(",")
-                return validIds.includes(object.id)
-            }
-            console.log("Failed env check in idsFilter")
-            return true
-        },
-        templateFromEnvFilter:(list: List, object: MapObject): boolean => {
-            if (process.env.GATHER_TEMPLATE_FILTER_IDS && object.templateId){
-                let validIds = process.env.GATHER_TEMPLATE_FILTER_IDS.split(",")
-                return validIds.includes(object.templateId)
-            }
-            return true
-        }
+
+export abstract class Filter {
+    abstract filter(map: Partial<GameMapV2>, object: MapObject) : boolean 
+
+}
+
+export class AlwaysPassFilter extends Filter {
+    filter(map: Partial<GameMapV2>, object: MapObject) : boolean 
+    {
+        return true
     }
-    get(key:string){
-        return key in this.filters ? this.filters[key] : this.filters.alwaysPassFilter
+}
+export class TempateExistsFilter extends Filter {
+    filter(map: Partial<GameMapV2>, object: MapObject) : boolean 
+    {
+        return object._name ? Templates.name.includes(object._name!) : false
+    }
+}
+
+export class ItemIDsFilter extends Filter {
+    ids: Array<string>
+    constructor(ids:Array<string>){
+        super()
+        this.ids = ids 
+    }
+
+    filter(map: Partial<GameMapV2>, object: MapObject) : boolean 
+    {
+        return object.id ? this.ids.includes(object.id) : false
+    }
+}
+
+export class TemplateIDsFilter extends Filter {
+    templateIds: Array<string>
+    constructor(templateIds: string | Array<string>){
+        super()
+        this.templateIds = Array.isArray(templateIds) ? templateIds : new Array(templateIds)
+    }
+
+    filter(map: Partial<GameMapV2>, object: MapObject) : boolean 
+    {
+        return object.templateId ? this.templateIds.includes(object.templateId) : false
     }
 }

@@ -8,6 +8,10 @@
       "lib": ["es2019", "dom"]
     },
     "include": ["./**/*"],
-    "references": []
+    "references": [],
+    "typeRoots" : [
+      "node_modules/@types",
+      "types"
+    ]
   }
   
