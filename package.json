@@ -4,16 +4,16 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "alarms": "tsc -b && node dist/index.js alarms",
-    "items": "tsc -b && node dist/index.js items",
-    "help" : "tsc -b && node dist/index.js help"
-
+    "start": "tsc -b && node dist/index.js",
+    "print": "tsc -b && node dist/printer.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@gathertown/gather-game-client": "31.2.2",
     "isomorphic-ws": "^4.0.1",
+    "ntc": "^0.0.1",
+    "ts-node": "^10.4.0",
     "ws": "^8.2.1"
   },
   "devDependencies": {

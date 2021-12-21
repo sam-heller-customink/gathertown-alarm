@@ -1,30 +1,35 @@
 export class Alarm {
-    // Let's be ☀️☀️☀️☀️optimistic☀️☀️☀️☀️
-    state = false
+    public name: string
+    private state: boolean = false
+    private tests: Array<Function>
 
-    /**
-     * This is what you want to modify or override in a child 
-     * class to have the alarm actually operate on something. 
-     * currently it just swaps states every time it's checked
-     */
-    check() : void
+    constructor(name:string, tests:Array<Function>|Function, interval:number = 1000)
     {
-        this.state = this.state ? this.clear() : this.trip()
+        this.name = name
+        this.tests = Array.isArray(tests) ? tests : [tests]
+        setInterval(() => {this.check()},interval)
     }
-
-    //Everything from here on is CRUD. Well, RU really, but whatever
-    active() : boolean
+    
+    public okay() : boolean
     {
         return this.state
     }
 
-    clear() : boolean 
-    {
-        return this.state = false
+    private check() : void
+    {   
+        for(let test of this.tests){
+            if (!test()){this.trip();return;}
+        }
+        this.clear()
     }
 
-    trip() : boolean 
+    private clear() : boolean 
     {
-        return this.state = true   
+        return this.state = true
+    }
+
+    private trip() : boolean 
+    {
+        return this.state = false   
     }
 }
