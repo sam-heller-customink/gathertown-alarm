@@ -1,8 +1,10 @@
-# gathertown alarms 
+# [gathertown](https://gather.town) alarms 
 
-Experiment with the [gathertown](https://gather.town) [websockets API](https://gathertown.notion.site/Gather-Websocket-API-bf2d5d4526db412590c3579c36141063), which is under heavy development at the moment so this is probably already deprecated. 
+Experiment with the [gathertown websockets API](https://gathertown.notion.site/Gather-Websocket-API-bf2d5d4526db412590c3579c36141063), which is under heavy development at the moment so this is probably already deprecated. This is more for reference purposes than actual function (though it's still totes functional). Configuration is all in code as described below.
 
-This is more for reference purposes than actual function (though it's still totes functional). Configuration is all in code as described below: 
+<p align="center"><img src="https://user-images.githubusercontent.com/93146809/146854283-65177fd7-7402-490c-b0cc-c6a52cd95f8f.gif" width="500" height="500")</p>
+    
+    
 ## <img src='https://user-images.githubusercontent.com/93146809/146673547-0204dbe5-28b4-432d-9d6d-44c97f5c5f16.png' width=45 height=30>  config.ts 
 Configuration for your space is controlled in config.ts, and should look something like this. 
 ```typescript
